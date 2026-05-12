@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Wallpaper</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="background-layer" id="backgroundLayer" aria-hidden="true"></div>
+    <div class="background-overlay" aria-hidden="true"></div>
+
+    <main class="workspace" id="workspace">
+      <section
+        class="widget-zone top-left draggable-widget clock-widget clear-glass"
+        id="clockWidget"
+        aria-label="Clock widget"
+      >
+        <div class="clock-face">
+          <p id="clockTime" class="clock-time">00:00:00</p>
+          <div class="clock-divider" aria-hidden="true"></div>
+          <p id="clockDate" class="clock-date">---</p>
+        </div>
+      </section>
+
+      <section
+        class="widget-zone top-right glass calendar-widget draggable-widget"
+        id="calendarWidget"
+        aria-label="Calendar widget"
+      >
+        <header class="calendar-header">
+          <p id="calendarMonthLabel" class="calendar-month-label">May 2026</p>
+        </header>
+        <div class="calendar-weekdays" aria-hidden="true">
+          <span class="is-weekend">S</span>
+          <span>M</span>
+          <span>T</span>
+          <span>W</span>
+          <span>T</span>
+          <span>F</span>
+          <span class="is-weekend">S</span>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </section>
+
+      <section
+        class="widget-zone bottom-right glass music-widget draggable-widget"
+        id="musicWidget"
+        aria-label="Music widget"
+      >
+        <div class="music-drag-strip" aria-hidden="true"></div>
+        <div class="music-widget-body">
+          <div class="music-album-frame">
+            <img id="musicAlbumArt" class="music-album-art" alt="" crossorigin="anonymous" />
+            <div id="musicAlbumPlaceholder" class="music-album-placeholder" aria-hidden="true"></div>
+          </div>
+          <p id="musicSongTitle" class="music-song-title">---</p>
+          <p id="musicArtistLine" class="music-artist-line">---</p>
+          <p id="musicPlatformHint" class="music-platform-hint" hidden></p>
+        </div>
+      </section>
+    </main>
+
+    <div id="visualizerDock" class="visualizer-dock" aria-hidden="true">
+      <canvas id="visualizerCanvas" class="visualizer-canvas"></canvas>
+    </div>
+
+    <script src="./script.js?v=20260512-music-platforms-1"></script>
+  </body>
+</html>

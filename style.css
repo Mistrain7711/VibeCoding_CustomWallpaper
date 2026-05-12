@@ -1,0 +1,1585 @@
+@font-face {
+  font-family: "Orbitron Local";
+  src: url("./assets/fonts/Orbitron-Variable.ttf") format("truetype");
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --text-primary: #e8ecff;
+  --text-muted: #b8c3f5;
+  --glass-bg: rgba(22, 27, 56, 0.36);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  --accent: #86a8ff;
+  --accent-strong: #5d8fff;
+  --clock-text: #e0e0e0;
+  --sticky-bg: rgba(255, 248, 191, 0.92);
+  --sticky-bg-drag: rgba(255, 248, 191, 0.72);
+  --sticky-text: #3a3200;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family:
+    "Pretendard",
+    "Inter",
+    "Segoe UI",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  color: var(--text-primary);
+  background: radial-gradient(circle at 15% 20%, #384b86 0%, #0f142f 42%, #070a1a 100%);
+}
+
+body.has-custom-background {
+  background: #000;
+}
+
+.background-layer,
+.background-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.background-layer {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transition: opacity 320ms ease;
+  opacity: 0;
+}
+
+.background-layer.has-image {
+  opacity: 1;
+}
+
+body.has-custom-background .background-overlay {
+  opacity: 0;
+}
+
+.background-overlay {
+  background:
+    linear-gradient(150deg, rgba(11, 14, 38, 0.48), rgba(11, 14, 38, 0.7)),
+    radial-gradient(circle at 78% 12%, rgba(129, 172, 255, 0.25), transparent 40%);
+  backdrop-filter: blur(0.5px);
+}
+
+.workspace {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+}
+
+.widget-zone {
+  position: absolute;
+  max-width: 320px;
+}
+
+.widget-zone.hidden-widget {
+  display: none;
+}
+
+.top-left {
+  top: 24px;
+  left: 24px;
+}
+
+.top-right {
+  top: 24px;
+  right: 24px;
+}
+
+.bottom-right {
+  right: 24px;
+  bottom: 24px;
+}
+
+body.has-music-visualizer .music-widget {
+  bottom: 96px;
+}
+
+body.has-music-visualizer .workspace {
+  padding-bottom: 80px;
+}
+
+.music-widget {
+  width: min(280px, calc(100vw - 48px));
+  max-width: 280px;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  touch-action: none;
+  z-index: 8;
+  cursor: grab;
+  position: absolute;
+}
+
+.music-widget .music-drag-strip {
+  position: absolute;
+  inset: 0;
+  flex-shrink: 0;
+  height: auto;
+  background: transparent;
+  pointer-events: none;
+}
+
+.music-widget:active,
+.music-widget.is-dragging {
+  cursor: grabbing;
+}
+
+.music-widget-body {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.music-album-frame {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.music-album-placeholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(90, 120, 200, 0.35), rgba(20, 26, 52, 0.55));
+}
+
+.music-album-placeholder.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.music-album-art {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.music-album-art.is-hidden {
+  opacity: 0;
+}
+
+.music-song-title {
+  margin: 0;
+  width: 100%;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.music-artist-line {
+  margin: 0;
+  width: 100%;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  word-break: break-word;
+}
+
+.music-progress-block {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.music-progress-track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: visible;
+}
+
+.music-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  pointer-events: none;
+}
+
+.music-progress-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f5f7ff;
+  border: 2px solid rgba(134, 168, 255, 0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.music-time-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.music-time-text {
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.music-platform-hint {
+  margin: 0;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.visualizer-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  height: 72px;
+  pointer-events: none;
+  display: flex;
+  align-items: stretch;
+}
+
+.visualizer-dock.hidden-widget {
+  display: none;
+}
+
+.visualizer-canvas {
+  width: 100%;
+  height: 72px;
+  display: block;
+  vertical-align: bottom;
+}
+
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.widget-placeholder {
+  border-radius: 16px;
+  padding: 14px 16px;
+  min-width: 250px;
+  background: rgba(20, 26, 52, 0.3);
+  border: 1px dashed rgba(174, 188, 255, 0.25);
+}
+
+.widget-placeholder h2 {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+}
+
+.widget-placeholder p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* Clock: transparent by default; glass only while drag-ready / dragging */
+.clock-widget.clear-glass {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 16px 20px;
+  border-radius: 16px;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    backdrop-filter 180ms ease;
+}
+
+.clock-widget.glass-drag-mode {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.clock-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: "Orbitron Local", "Segoe UI", sans-serif;
+  color: var(--clock-text);
+}
+
+.clock-time {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+}
+
+.clock-divider {
+  width: min(280px, 78vw);
+  height: 1px;
+  background: var(--clock-text);
+  opacity: 0.55;
+  margin: 14px 0 12px;
+}
+
+.clock-date {
+  margin: 0;
+  font-size: 1.032rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--clock-text);
+  opacity: 0.92;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+.draggable-widget {
+  touch-action: none;
+  user-select: none;
+}
+
+.draggable-widget.is-dragging {
+  cursor: grabbing;
+}
+
+.sticky-notes-root {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.sticky-notes-root .sticky-note {
+  pointer-events: auto;
+}
+
+.sticky-note {
+  position: absolute;
+  min-width: 180px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 2px 4px 18px rgba(0, 0, 0, 0.25);
+  font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+  background-color: var(--sticky-bg);
+  color: var(--sticky-text);
+  transition: background-color 220ms ease, color 180ms ease;
+}
+
+.sticky-note.is-drag-ready {
+  background-color: var(--sticky-bg-drag);
+}
+
+.sticky-note.is-dragging {
+  cursor: grabbing;
+  z-index: 50;
+}
+
+.sticky-drag-strip {
+  flex-shrink: 0;
+  height: 28px;
+  border-radius: 3px 3px 0 0;
+  cursor: grab;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.06), transparent);
+}
+
+.sticky-drag-strip:active {
+  cursor: grabbing;
+}
+
+.sticky-note-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  color: inherit;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.sticky-note-close:hover {
+  background: rgba(220, 50, 50, 0.2);
+  color: #8b0000;
+}
+
+.sticky-body-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.sticky-note-body {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px 22px;
+  border: none;
+  resize: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.sticky-note-body.sticky-note-body--scroll {
+  overflow-y: auto;
+}
+
+.sticky-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  cursor: se-resize;
+  background: linear-gradient(
+    135deg,
+    transparent 50%,
+    rgba(0, 0, 0, 0.18) 50%,
+    rgba(0, 0, 0, 0.18) 58%,
+    transparent 58%
+  );
+  z-index: 2;
+}
+
+.panel-toggle-button {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  z-index: 12;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  font-size: 1.28rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: transform 160ms ease;
+}
+
+.panel-toggle-button:hover {
+  transform: scale(1.05);
+}
+
+.panel-toggle-button:active {
+  transform: scale(0.96);
+}
+
+.memo-manager-toggle-button {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 12;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: transform 160ms ease;
+}
+
+.memo-manager-toggle-button:hover {
+  transform: scale(1.05);
+}
+
+.memo-manager-toggle-button:active {
+  transform: scale(0.96);
+}
+
+.memo-manager-toggle-button.hidden-widget,
+.memo-manager-panel.hidden-widget {
+  display: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.shortcut-manager-toggle-button {
+  position: fixed;
+  left: 86px;
+  bottom: 20px;
+  z-index: 12;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: transform 160ms ease;
+}
+
+.shortcut-manager-toggle-button:hover {
+  transform: scale(1.05);
+}
+
+.shortcut-manager-toggle-button:active {
+  transform: scale(0.96);
+}
+
+.shortcut-manager-toggle-button.hidden-widget,
+.shortcut-manager-panel.hidden-widget,
+.shortcut-dock-root.hidden-widget {
+  display: none;
+}
+
+.shortcut-manager-panel {
+  position: fixed;
+  left: 86px;
+  bottom: 84px;
+  z-index: 11;
+  width: min(320px, calc(100vw - 40px));
+  max-height: min(420px, 55vh);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transform-origin: bottom left;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    visibility 180ms ease;
+}
+
+.shortcut-manager-panel.is-collapsed {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95) translateY(12px);
+  pointer-events: none;
+}
+
+.shortcut-manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.shortcut-manager-header h2 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.shortcut-manager-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.shortcut-manager-hint {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.shortcut-admin-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shortcut-admin-item {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 15, 34, 0.35);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: var(--text-primary);
+}
+
+.shortcut-admin-item.is-empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.shortcut-admin-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.shortcut-admin-meta {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  word-break: break-all;
+  margin-bottom: 8px;
+}
+
+.shortcut-admin-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.shortcut-dock-root {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.shortcut-dock-root .shortcut-dock {
+  pointer-events: auto;
+}
+
+.shortcut-dock {
+  position: absolute;
+  width: min(1536px, calc(100vw - 40px));
+  height: 256px;
+  border-radius: 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  touch-action: none;
+  box-sizing: border-box;
+}
+
+.shortcut-dock.is-dragging {
+  cursor: grabbing;
+  outline: 1px dashed rgba(200, 210, 255, 0.45);
+}
+
+.shortcut-dock-drag-strip {
+  flex-shrink: 0;
+  height: 28px;
+  cursor: grab;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.08), transparent);
+}
+
+.shortcut-dock-drag-strip:active {
+  cursor: grabbing;
+}
+
+.shortcut-dock-inner {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px 16px;
+}
+
+.shortcut-dock-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.shortcut-dock-icons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: auto;
+  padding: 0 8px;
+  min-height: 192px;
+}
+
+.shortcut-dock-icon-btn {
+  flex: 0 0 auto;
+  width: 192px;
+  height: 192px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 15, 34, 0.45);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 0;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.shortcut-dock-icon-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.shortcut-dock-icon-img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
+
+.shortcut-dock-icon-fallback {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.shortcut-dock-resize {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 14px;
+  height: 100%;
+  cursor: ew-resize;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.06) 40%,
+    rgba(255, 255, 255, 0.12)
+  );
+  z-index: 3;
+}
+
+.control-panel {
+  position: fixed;
+  top: 84px;
+  right: 20px;
+  z-index: 11;
+  width: min(350px, calc(100vw - 40px));
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transform-origin: top right;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    visibility 180ms ease;
+}
+
+.control-panel.is-collapsed {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95) translateY(-12px);
+  pointer-events: none;
+}
+
+.memo-manager-panel {
+  position: fixed;
+  left: 20px;
+  bottom: 84px;
+  z-index: 11;
+  width: min(300px, calc(100vw - 40px));
+  max-height: min(420px, 55vh);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transform-origin: bottom left;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    visibility 180ms ease;
+}
+
+.memo-manager-panel.is-collapsed {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95) translateY(12px);
+  pointer-events: none;
+}
+
+.memo-manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.memo-manager-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.memo-manager-header h2 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.memo-manager-hint {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.rgb-palette-widget {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 15, 34, 0.4);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rgb-palette-widget[hidden] {
+  display: none;
+}
+
+.rgb-palette-title {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.color-palette-canvas {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.rgb-input-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.rgb-input-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.rgb-input {
+  width: 52px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 15, 34, 0.55);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.rgb-inline-btn {
+  margin-top: auto;
+}
+
+.memo-admin-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.memo-admin-item {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 15, 34, 0.35);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  line-height: 1.3;
+  word-break: break-word;
+  cursor: default;
+}
+
+.memo-admin-item.is-empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.panel-header h1 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.panel-header p {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.panel-section {
+  background: rgba(10, 15, 34, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.panel-section h2 {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+}
+
+.glass-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(130, 158, 255, 0.18);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.glass-secondary:hover {
+  background: rgba(130, 158, 255, 0.28);
+}
+
+.glass-secondary {
+  margin-left: 8px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 0.86rem;
+}
+
+.clock-format-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.clock-format-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.clock-format-segment {
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.segment-button {
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  background: rgba(10, 15, 34, 0.45);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+
+.segment-button:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.segment-button:hover {
+  color: var(--text-primary);
+  background: rgba(130, 158, 255, 0.15);
+}
+
+.segment-button.active {
+  color: var(--text-primary);
+  background: linear-gradient(120deg, rgba(134, 168, 255, 0.35), rgba(93, 143, 255, 0.35));
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(127, 140, 181, 0.6);
+  transition: 0.2s ease;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #f5f7ff;
+  transition: transform 0.2s ease;
+}
+
+.switch input:checked + .slider {
+  background: linear-gradient(120deg, var(--accent), var(--accent-strong));
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.mini-button {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(130, 158, 255, 0.16);
+  color: var(--text-primary);
+  border-radius: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 0.76rem;
+}
+
+.mini-button:hover {
+  background: rgba(130, 158, 255, 0.28);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(3, 6, 18, 0.52);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.shortcut-input-modal {
+  width: min(420px, calc(100vw - 40px));
+  border-radius: 18px;
+  overflow: hidden;
+  transform: translateY(8px) scale(0.98);
+  opacity: 0;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.modal-backdrop.is-open .shortcut-input-modal {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.shortcut-input-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background:
+    linear-gradient(145deg, rgba(134, 168, 255, 0.16), rgba(10, 15, 34, 0.18)),
+    rgba(10, 15, 34, 0.24);
+}
+
+.shortcut-input-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shortcut-modal-eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.shortcut-input-header h2 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.shortcut-input-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.shortcut-input-label {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.shortcut-modal-input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  outline: none;
+  background: rgba(7, 11, 28, 0.6);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.shortcut-modal-input:focus {
+  border-color: rgba(134, 168, 255, 0.82);
+  box-shadow: 0 0 0 3px rgba(134, 168, 255, 0.18);
+}
+
+.shortcut-modal-error {
+  min-height: 1rem;
+  margin: -4px 0 0;
+  color: #ffc1c8;
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.shortcut-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.shortcut-modal-actions .glass-secondary {
+  margin-left: 0;
+}
+
+.shortcut-modal-actions .mini-button,
+.shortcut-modal-actions .glass-secondary {
+  min-width: 72px;
+  padding: 8px 12px;
+}
+
+@media (max-width: 720px) {
+  .workspace {
+    padding: 14px;
+  }
+
+  .top-left,
+  .top-right,
+  .bottom-right {
+    position: static;
+    margin-bottom: 10px;
+  }
+
+  .widget-placeholder {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .control-panel {
+    top: 78px;
+    right: 14px;
+  }
+
+  .panel-toggle-button {
+    top: 14px;
+    right: 14px;
+  }
+
+  .memo-manager-toggle-button {
+    left: 14px;
+    bottom: 14px;
+  }
+
+  .memo-manager-panel {
+    left: 14px;
+    bottom: 78px;
+  }
+
+  .shortcut-manager-toggle-button {
+    left: 80px;
+    bottom: 14px;
+  }
+
+  .shortcut-manager-panel {
+    left: 14px;
+    right: 14px;
+    width: auto;
+    bottom: 148px;
+  }
+
+  body.has-music-visualizer .music-widget {
+    bottom: 88px;
+  }
+}
+
+.sticky-note-body,
+.shortcut-modal-input,
+.rgb-input {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    cursor: text !important;
+    pointer-events: auto !important;
+}
+
+/* style.css 맨 아래 추가 */
+/* 키보드 대리 입력기(Proxy) 타겟 표시를 위한 효과 */
+.sticky-note-body.proxy-active,
+.shortcut-modal-input.proxy-active {
+    outline: 2px solid var(--accent-strong) !important;
+    box-shadow: 0 0 12px rgba(93, 143, 255, 0.6) !important;
+    transition: outline 0.2s, box-shadow 0.2s;
+}
+
+/* ========================================= */
+/* ISSUE FIX: 위젯 1.5배 스케일 업 (바로가기 제외) */
+/* ========================================= */
+
+/* 1. 시계 위젯 */
+.clock-time {
+    font-size: clamp(2.62rem, 6vw, 3.52rem) !important;
+}
+
+.clock-date {
+    font-size: 1.55rem !important;
+}
+
+.clock-widget.clear-glass {
+    padding: 24px 30px !important;
+}
+
+/* 2. 음악 위젯 */
+.music-widget {
+    width: min(420px, calc(100vw - 48px)) !important;
+    max-width: 420px !important;
+    border-radius: 24px !important;
+}
+
+.music-widget-body {
+    padding: 18px 21px 21px !important;
+    gap: 15px !important;
+}
+
+.music-album-frame {
+    max-width: 330px !important;
+    border-radius: 15px !important;
+}
+
+.music-song-title {
+    font-size: 1.57rem !important;
+}
+
+.music-artist-line {
+    font-size: 1.23rem !important;
+    margin-bottom: 5px !important;
+}
+
+.music-time-text {
+    font-size: 1.08rem !important;
+}
+
+.music-progress-track {
+    height: 9px !important;
+}
+
+.music-progress-thumb {
+    width: 15px !important;
+    height: 15px !important;
+}
+
+/* 3. 메모장 위젯 */
+.sticky-note-body {
+    font-size: 1.38rem !important;
+    padding-bottom: 30px !important;
+}
+
+.sticky-drag-strip {
+    height: 42px !important;
+}
+
+.sticky-note-close {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 1.5rem !important;
+}
+
+.sticky-resize-handle {
+    width: 27px !important;
+    height: 27px !important;
+}
+
+/* 4. 관리 패널들 */
+.control-panel, .memo-manager-panel, .shortcut-manager-panel {
+    width: min(525px, calc(100vw - 40px)) !important;
+    padding: 27px !important;
+    gap: 24px !important;
+}
+
+.panel-header h1 {
+    font-size: 1.62rem !important;
+}
+
+.panel-header p {
+    font-size: 1.23rem !important;
+}
+
+.panel-section h2 {
+    font-size: 1.38rem !important;
+}
+
+.toggle-row, .clock-format-label {
+    font-size: 1.29rem !important;
+}
+
+.segment-button, .mini-button, .glass-secondary {
+    font-size: 1.23rem !important;
+    padding: 10px 15px !important;
+}
+
+/* 관리자 패널 여닫기 버튼들 1.5배 */
+.panel-toggle-button, .memo-manager-toggle-button, .shortcut-manager-toggle-button {
+    width: 78px !important;
+    height: 78px !important;
+    font-size: 1.8rem !important;
+}
+
+.shortcut-manager-toggle-button {
+    left: 118px !important;
+}
+/* 버튼 안겹치게 간격 조정 */
+
+/* ========================================= */
+/* 시계 위젯 줄바꿈(Wrapping) 방지 및 너비 확장 */
+/* ========================================= */
+
+/* 기존 320px로 제한되어 있던 위젯 최대 너비를 해제합니다 */
+.clock-widget {
+    max-width: none !important;
+    min-width: max-content !important;
+}
+
+/* 시간과 날짜 텍스트가 무조건 한 줄로만 출력되도록 강제합니다 */
+.clock-time,
+.clock-date {
+    white-space: nowrap !important;
+}
+
+/* 글씨가 길어진 만큼 가운데 구분선(divider)도 자연스럽게 길어지도록 수정합니다 */
+.clock-divider {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+.calendar-widget {
+  width: min(360px, calc(100vw - 48px));
+  max-width: 360px;
+  padding: 22px 24px 24px;
+  border-radius: 18px;
+  overflow: hidden;
+  z-index: 7;
+}
+
+.calendar-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.calendar-month-label {
+  margin: 0;
+  font-family: "Orbitron Local", "Segoe UI", sans-serif;
+  font-size: 1.72rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary);
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: center;
+  text-align: center;
+}
+
+.calendar-weekdays {
+  padding-bottom: 12px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(232, 236, 255, 0.82);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.calendar-grid {
+  row-gap: 8px;
+}
+
+.calendar-day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: 34px;
+  border-radius: 999px;
+  color: var(--text-primary);
+  font-family: "Orbitron Local", "Segoe UI", sans-serif;
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar-day.is-empty {
+  visibility: hidden;
+}
+
+.calendar-weekdays .is-weekend,
+.calendar-day.is-weekend {
+  color: #ff6b6b;
+}
+
+.calendar-day.is-today {
+  color: #061026;
+  background: linear-gradient(135deg, rgba(232, 236, 255, 0.96), rgba(134, 168, 255, 0.86));
+  box-shadow: 0 8px 24px rgba(93, 143, 255, 0.35);
+}
+
+.widget-scale-corner {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 30px;
+  height: 30px;
+  z-index: 20;
+  cursor: nwse-resize;
+  touch-action: none;
+}
+
+.widget-scale-corner::before {
+  content: "";
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid rgba(232, 236, 255, 0.58);
+  border-bottom: 2px solid rgba(232, 236, 255, 0.58);
+  border-radius: 1px;
+  opacity: 0.68;
+}
+
+.widget-zone.is-scaling {
+  cursor: nwse-resize;
+}
+
+body.has-music-visualizer .music-widget {
+  bottom: 240px;
+}
+
+body.has-music-visualizer .workspace {
+  padding-bottom: 232px;
+}
+
+.visualizer-dock,
+.visualizer-canvas {
+  height: 216px;
+}

@@ -1,0 +1,22 @@
+# Local assistant/editor artifacts
+agent-transcripts/
+terminals/
+mcps/
+
+# Local environment/secrets
+.env
+.env.*
+*.local
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+.cache/
+
+# OS/editor metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
