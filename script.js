@@ -261,60 +261,83 @@ function safeAddEventListener(target, type, handler, options) {
   return () => target.removeEventListener(type, handler, options);
 }
 
+function getWallpaperProperty(properties, ...names) {
+  if (!properties) {
+    return null;
+  }
+
+  for (const name of names) {
+    if (properties[name]) {
+      return properties[name];
+    }
+  }
+
+  const propertyNames = Object.keys(properties);
+  for (const name of names) {
+    const lowerName = String(name).toLowerCase();
+    const matchedKey = propertyNames.find((key) => key.toLowerCase() === lowerName);
+    if (matchedKey) {
+      return properties[matchedKey];
+    }
+  }
+
+  return null;
+}
+
 function initializeWallpaperProperties() {
-    window.wallpaperPropertyListener = {
-        applyUserProperties(properties) {
-            // 1. 배경화면 이미지 처리
-            if (properties && properties.custom_bg_image) {
-                applyCustomBackground(properties.custom_bg_image.value);
-            } else if (properties && properties.customBackground) {
-                applyCustomBackground(properties.customBackground.value);
-            }
+  window.wallpaperPropertyListener = {
+    applyUserProperties(properties) {
+      const backgroundProperty = getWallpaperProperty(properties, "custom_bg_image", "customBackground", "custombackground");
+      const keyboardProxyProperty = getWallpaperProperty(properties, "keyboardProxy", "keyboardproxy");
+      const initialStateProperty = getWallpaperProperty(properties, "initialStateJson", "initialstatejson");
+      const clockEnabledProperty = getWallpaperProperty(properties, "clockEnabled", "clockenabled");
+      const musicEnabledProperty = getWallpaperProperty(properties, "musicEnabled", "musicenabled");
+      const calendarEnabledProperty = getWallpaperProperty(properties, "calendarEnabled", "calendarenabled");
+      const clockFormatProperty = getWallpaperProperty(properties, "clockFormat24h", "clockformat24h");
+      const visualizerEnabledProperty = getWallpaperProperty(properties, "visualizerEnabled", "visualizerenabled");
+      const visualizerSensitivityProperty = getWallpaperProperty(properties, "visualizerSensitivity", "visualizersensitivity");
 
-            // 2. ✨ 키보드 대리 입력기 (강화판)
-            if (properties && properties.keyboardProxy) {
-                // 사용자가 마지막으로 클릭한 요소(.proxy-active)를 우선 찾고, 
-                // 없으면 첫 번째 메모장(.sticky-note-body)을 대상으로 합니다.
-                const targetInput = document.querySelector('.proxy-active') || document.querySelector('.sticky-note-body');
+      if (backgroundProperty) {
+        applyCustomBackground(backgroundProperty.value);
+      }
 
-                if (targetInput) {
-                    targetInput.value = properties.keyboardProxy.value;
-                    // 입력 값이 변경되었음을 시스템에 알림
-                    targetInput.dispatchEvent(new Event("input", { bubbles: true }));
-                }
-            }
+      if (keyboardProxyProperty) {
+        const targetInput = document.querySelector(".proxy-active") || document.querySelector(".sticky-note-body");
+        if (targetInput) {
+          targetInput.value = keyboardProxyProperty.value;
+          targetInput.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      }
 
-            // 3. 초기 상태 JSON 처리
-      if (properties && properties.initialStateJson) {
-        applyInitialStateJson(properties.initialStateJson.value);
+      if (initialStateProperty) {
+        applyInitialStateJson(initialStateProperty.value);
       }
-      if (properties && properties.clockEnabled) {
-        applyWidgetVisibility("clock", parseWallpaperBool(properties.clockEnabled.value));
+      if (clockEnabledProperty) {
+        applyWidgetVisibility("clock", parseWallpaperBool(clockEnabledProperty.value));
       }
-      if (properties && properties.musicEnabled) {
-        applyWidgetVisibility("music", parseWallpaperBool(properties.musicEnabled.value));
+      if (musicEnabledProperty) {
+        applyWidgetVisibility("music", parseWallpaperBool(musicEnabledProperty.value));
       }
-      if (properties && properties.calendarEnabled) {
-        applyWidgetVisibility("calendar", parseWallpaperBool(properties.calendarEnabled.value));
+      if (calendarEnabledProperty) {
+        applyWidgetVisibility("calendar", parseWallpaperBool(calendarEnabledProperty.value));
       }
-      if (properties && properties.clockFormat24h) {
-        clockIn24hMode = parseWallpaperBool(properties.clockFormat24h.value);
+      if (clockFormatProperty) {
+        clockIn24hMode = parseWallpaperBool(clockFormatProperty.value);
         safeStorage.set(STORAGE_KEYS.clockFormat24h, String(clockIn24hMode));
         syncClockFormatButtons();
         updateClockText();
       }
-      if (properties && properties.visualizerEnabled) {
-        setVisualizerEnabled(parseWallpaperBool(properties.visualizerEnabled.value));
+      if (visualizerEnabledProperty) {
+        setVisualizerEnabled(parseWallpaperBool(visualizerEnabledProperty.value));
       }
-      if (properties && properties.visualizerSensitivity) {
+      if (visualizerSensitivityProperty) {
         setVisualizerSensitivity(
-          parseWallpaperNumber(properties.visualizerSensitivity.value, DEFAULT_VISUALIZER_SENSITIVITY, 1, 24),
+          parseWallpaperNumber(visualizerSensitivityProperty.value, DEFAULT_VISUALIZER_SENSITIVITY, 1, 24),
         );
       }
     },
   };
 }
-
 function applyCustomBackground(value) {
     if (!value) {
         backgroundLayer.innerHTML = "";
